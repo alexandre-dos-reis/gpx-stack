@@ -1,16 +1,24 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		Hello(Props{name: "Alex", id: "sldkfjl-sdfsdfsdf-fsdfsdf-fdsdsf"}).Render(r.Context(), w)
+	router := http.NewServeMux()
+
+	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		Hello(
+			HelloProps{name: "Bob", id: "sldkfjl-sdfsdfsdf-fsdfsdf-fdsdsf"},
+		).Render(r.Context(), w)
 	})
 
-	port := ":3000"
-	fmt.Printf("Listening on http://localhost%s", port)
-	http.ListenAndServe(port, nil)
+	server := http.Server{
+		Addr:    ":3000",
+		Handler: router,
+	}
+
+	log.Println("Listening on http://localhost:3000")
+	server.ListenAndServe()
 }

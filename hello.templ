@@ -1,10 +1,10 @@
 package main
 
-type Props struct {
+type HelloProps struct {
 	name string
 	id   string
 }
 
-templ Hello(props Props) {
-	<div>Hello, { props.name }. Your id is { props.id }</div>
+templ Hello(props HelloProps) {
+	<div>Hello { props.name }. Your id is { props.id }</div>
 }
