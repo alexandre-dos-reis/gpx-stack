@@ -1,16 +1,33 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/a-h/templ-examples/hello-world/db/repository"
+	"github.com/jackc/pgx/v5"
 )
 
 func main() {
-	router := http.NewServeMux()
+	ctx := context.Background()
 
+	conn, err := pgx.Connect(ctx, os.Getenv("DATABASE_URL"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(ctx)
+
+	repo := repository.New(conn)
+	products, _ := repo.FindAllProducts(ctx)
+
+	router := http.NewServeMux()
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		Hello(
-			HelloProps{name: "Bob", id: "sldkfjl-sdfsdfsdf-fsdfsdf-fdsdsf"},
+			HelloProps{products: products},
 		).Render(r.Context(), w)
 	})
 
