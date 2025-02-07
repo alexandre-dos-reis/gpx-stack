@@ -16,7 +16,12 @@
 in {
   env.DATABASE_URL = DB_URL;
 
-  packages = with pkgs; [air sqlc go-migrate];
+  packages = with pkgs; [
+    air
+    sqlc
+    go-migrate
+    bun
+  ];
 
   languages.go = {
     enable = true;

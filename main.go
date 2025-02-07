@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/a-h/templ-examples/hello-world/db/repository"
+	"github.com/a-h/templ-examples/hello-world/views"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -25,9 +26,10 @@ func main() {
 	products, _ := repo.FindAllProducts(ctx)
 
 	router := http.NewServeMux()
+
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		Hello(
-			HelloProps{products: products},
+		views.Hello(
+			views.HelloProps{Products: products},
 		).Render(r.Context(), w)
 	})
 

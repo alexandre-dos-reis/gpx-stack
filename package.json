@@ -1,0 +1,13 @@
+{
+  "name": "go-templ",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0"
+  }
+}

@@ -4,7 +4,7 @@
     {
       "engine": "postgresql",
       "schema": "./db/migrations",
-      "queries": "query.sql",
+      "queries": "./db/query.sql",
       "gen": {
         "go": {
           "package": "repository",
