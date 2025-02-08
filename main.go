@@ -3,49 +3,54 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 	"os"
 
+	"github.com/a-h/templ"
 	"github.com/a-h/templ-examples/hello-world/db/repository"
 	"github.com/a-h/templ-examples/hello-world/views/pages"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/labstack/echo/v4"
 )
+
+func render(ctx echo.Context, component templ.Component) error {
+	return component.Render(ctx.Request().Context(), ctx.Response())
+}
+
+func getDB(c echo.Context) *pgxpool.Pool {
+	return c.Get("db").(*pgxpool.Pool)
+}
 
 func main() {
 	ctx := context.Background()
 
-	conn, err := pgx.Connect(ctx, os.Getenv("DATABASE_URL"))
+	db, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(ctx)
+	defer db.Close()
 
-	repo := repository.New(conn)
-	products, _ := repo.FindAllProducts(ctx)
+	e := echo.New()
 
-	router := http.NewServeMux()
-
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		pages.HomePage(
-			pages.HomePageProps{Products: products},
-		).Render(r.Context(), w)
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("db", db)
+			return next(c)
+		}
 	})
 
-	router.HandleFunc("GET /products", func(w http.ResponseWriter, r *http.Request) {
-		pages.HomePage(
-			pages.HomePageProps{Products: products},
-		).Render(r.Context(), w)
+	e.GET("/", func(c echo.Context) error {
+		return render(c, pages.HomePage())
 	})
 
-	port := ":3000"
+	e.GET("/products", func(c echo.Context) error {
+		db := getDB(c)
+		repo := repository.New(db)
+		products, _ := repo.FindAllProducts(ctx)
+		return render(c, pages.ProductsPage(
+			pages.ProductsPageProps{Products: products},
+		))
+	})
 
-	server := http.Server{
-		Addr:    port,
-		Handler: router,
-	}
-
-	log.Println("Listening on http://localhost" + port)
-	server.ListenAndServe()
+	e.Logger.Fatal(e.Start(":3000"))
 }
