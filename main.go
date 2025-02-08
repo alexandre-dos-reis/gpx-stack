@@ -28,16 +28,18 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		views.Hello(
-			views.HelloProps{Products: products},
+		views.HomePage(
+			views.HomePageProps{Products: products},
 		).Render(r.Context(), w)
 	})
 
+	port := ":3000"
+
 	server := http.Server{
-		Addr:    ":3000",
+		Addr:    port,
 		Handler: router,
 	}
 
-	log.Println("Listening on http://localhost:3000")
+	log.Println("Listening on http://localhost" + port)
 	server.ListenAndServe()
 }

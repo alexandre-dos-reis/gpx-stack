@@ -1,0 +1,18 @@
+package views
+
+import "github.com/a-h/templ-examples/hello-world/db/repository"
+import "github.com/a-h/templ-examples/hello-world/views/layouts"
+
+type HomePageProps struct {
+	Products []repository.Product
+}
+
+templ HomePage(props HomePageProps) {
+	@layout.BaseLayout(layout.BaseLayoutProps{Title: "Home page"}) {
+    <ul>
+      for _, product := range props.Products {
+        <li id={ product.ID.String() }>{ product.Name }</li>
+      }
+    </ul>
+  }
+}
