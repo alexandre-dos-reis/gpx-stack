@@ -9,10 +9,10 @@ type HomePageProps struct {
 
 templ HomePage(props HomePageProps) {
 	@layout.BaseLayout(layout.BaseLayoutProps{Title: "Home page"}) {
-    <ul>
-      for _, product := range props.Products {
-        <li id={ product.ID.String() }>{ product.Name }</li>
-      }
-    </ul>
-  }
+		<ul>
+			for _, product := range props.Products {
+				<li id={ product.ID.String() }>{ product.Name }</li>
+			}
+		</ul>
+	}
 }

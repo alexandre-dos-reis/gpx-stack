@@ -23,11 +23,6 @@ in {
     bun
   ];
 
-  languages.go = {
-    enable = true;
-    package = pkgs-unstable.go;
-  };
-
   services.postgres = {
     enable = true;
     port = DB_PORT;
@@ -40,6 +35,16 @@ in {
         pass = DB_PASSWORD;
       }
     ];
+  };
+
+  languages.go = {
+    enable = true;
+    package = pkgs-unstable.go;
+  };
+
+  processes = {
+    air.exec = "air";
+    vite.exec = "bun dev";
   };
 
   scripts = let

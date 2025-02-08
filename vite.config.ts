@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  plugins: [tailwindcss()],
   server: {
     cors: {
       origin: "http://localhost:3000",
@@ -12,7 +14,6 @@ export default defineConfig({
       input: "./assets/index.ts",
     },
     outDir: "./public/assets",
-    assetsDir: ".",
     minify: true,
   },
 });
