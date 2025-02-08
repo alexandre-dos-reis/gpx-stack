@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/a-h/templ-examples/hello-world/db/repository"
-	"github.com/a-h/templ-examples/hello-world/views"
+	"github.com/a-h/templ-examples/hello-world/views/pages"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -28,14 +28,14 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		views.HomePage(
-			views.HomePageProps{Products: products},
+		pages.HomePage(
+			pages.HomePageProps{Products: products},
 		).Render(r.Context(), w)
 	})
 
 	router.HandleFunc("GET /products", func(w http.ResponseWriter, r *http.Request) {
-		views.HomePage(
-			views.HomePageProps{Products: products},
+		pages.HomePage(
+			pages.HomePageProps{Products: products},
 		).Render(r.Context(), w)
 	})
 
