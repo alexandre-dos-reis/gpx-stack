@@ -22,9 +22,18 @@ templ BaseLayout(props BaseLayoutProps) {
 				<script type="module" src="http://localhost:5173/assets/index.ts"></script>
 			}
 		</head>
-		<body class="sample-transition" hx-boost="true">
-			<header></header>
-			<main class="bg-red-500">
+		<body
+			hx-boost="true"
+		>
+			<header>
+				<nav>
+					<ul class="flex">
+						<li><a href="/">Home</a></li>
+						<li><a href="/products">Products</a></li>
+					</ul>
+				</nav>
+			</header>
+			<main class="">
 				{ children... }
 			</main>
 			<footer></footer>

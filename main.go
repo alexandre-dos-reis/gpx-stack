@@ -33,6 +33,12 @@ func main() {
 		).Render(r.Context(), w)
 	})
 
+	router.HandleFunc("GET /products", func(w http.ResponseWriter, r *http.Request) {
+		views.HomePage(
+			views.HomePageProps{Products: products},
+		).Render(r.Context(), w)
+	})
+
 	port := ":3000"
 
 	server := http.Server{
