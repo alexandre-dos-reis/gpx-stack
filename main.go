@@ -2,55 +2,52 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/a-h/templ"
-	"github.com/a-h/templ-examples/hello-world/db/repository"
-	"github.com/a-h/templ-examples/hello-world/views/pages"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/a-h/templ-examples/hello-world/database"
+	"github.com/a-h/templ-examples/hello-world/database/repository"
+	"github.com/a-h/templ-examples/hello-world/handlers"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/fx"
 )
 
 func render(ctx echo.Context, component templ.Component) error {
 	return component.Render(ctx.Request().Context(), ctx.Response())
 }
 
-func getDB(c echo.Context) *pgxpool.Pool {
-	return c.Get("db").(*pgxpool.Pool)
+func getDB(c echo.Context) *repository.Queries {
+	return c.Get("repo").(*repository.Queries)
 }
 
 func main() {
-	ctx := context.Background()
+	app := fx.New(
+		fx.Provide(
+			context.Background,
+			database.NewPostgresPool,
+			repository.New,
+			echo.New,
+			handlers.New,
+		),
+		fx.Invoke(invokeServer),
+	)
 
-	db, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	defer db.Close()
+	app.Run()
+}
 
-	e := echo.New()
+func invokeServer(
+	lc fx.Lifecycle,
+	e *echo.Echo,
+) {
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			go func() {
+				e.Logger.Fatal(e.Start(":3000"))
+			}()
 
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Set("db", db)
-			return next(c)
-		}
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			return e.Close()
+		},
 	})
-
-	e.GET("/", func(c echo.Context) error {
-		return render(c, pages.HomePage())
-	})
-
-	e.GET("/products", func(c echo.Context) error {
-		db := getDB(c)
-		repo := repository.New(db)
-		products, _ := repo.FindAllProducts(ctx)
-		return render(c, pages.ProductsPage(
-			pages.ProductsPageProps{Products: products},
-		))
-	})
-
-	e.Logger.Fatal(e.Start(":3000"))
 }
