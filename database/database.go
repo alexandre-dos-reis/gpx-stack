@@ -14,6 +14,7 @@ func NewPostgresPool(ctx context.Context) *pgxpool.Pool {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
+	// TODO: use lifecycle
 	defer pool.Close()
 
 	return pool
