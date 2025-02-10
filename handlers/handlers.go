@@ -26,6 +26,11 @@ func (h *Handlers) render(ctx echo.Context, component templ.Component) error {
 	return component.Render(ctx.Request().Context(), ctx.Response())
 }
 
+func (h *Handlers) registerRoutes() {
+	h.homeHandlers()
+	h.productsHandlers()
+}
+
 func (h *Handlers) StartServer(address string) {
 	h.echo.Static("/assets", "assets")
 
@@ -36,9 +41,4 @@ func (h *Handlers) StartServer(address string) {
 
 func (h *Handlers) Shutdown() error {
 	return h.echo.Close()
-}
-
-func (h *Handlers) registerRoutes() {
-	h.Home()
-	h.Products()
 }

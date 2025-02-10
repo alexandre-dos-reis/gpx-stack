@@ -53,8 +53,12 @@ in {
     mg-create.exec = ''
       migrate create -ext sql -dir ${migrationPath} -seq $1
     '';
-    mg-migrate.exec = ''
+    mg-migrate-up.exec = ''
       migrate -database ${DB_URL} -path ${migrationPath} up
+      sqlc generate
+    '';
+    mg-migrate-down.exec = ''
+      migrate -database ${DB_URL} -path ${migrationPath} down $1
       sqlc generate
     '';
     sql.exec = ''

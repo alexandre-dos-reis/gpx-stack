@@ -11,7 +11,7 @@ import (
 )
 
 func NewPostgresPool(lc fx.Lifecycle, ctx context.Context) repository.DBTX {
-	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {

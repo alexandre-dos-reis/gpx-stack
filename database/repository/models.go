@@ -11,5 +11,5 @@ import (
 type Product struct {
 	ID   pgtype.UUID
 	Name string
-	Slug pgtype.Text
+	Slug string
 }

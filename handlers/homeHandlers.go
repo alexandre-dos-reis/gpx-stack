@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handlers) Home() {
+func (h *Handlers) homeHandlers() {
 	h.echo.GET("/", func(c echo.Context) error {
 		return h.render(c, pages.HomePage())
 	})

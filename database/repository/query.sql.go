@@ -7,8 +7,6 @@ package repository
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const findAllProducts = `-- name: FindAllProducts :many
@@ -47,7 +45,7 @@ WHERE
     slug = $1
 `
 
-func (q *Queries) FindOneProductBySlug(ctx context.Context, slug pgtype.Text) (Product, error) {
+func (q *Queries) FindOneProductBySlug(ctx context.Context, slug string) (Product, error) {
 	row := q.db.QueryRow(ctx, findOneProductBySlug, slug)
 	var i Product
 	err := row.Scan(&i.ID, &i.Name, &i.Slug)
