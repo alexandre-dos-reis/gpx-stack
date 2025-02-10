@@ -13,13 +13,12 @@ templ BaseLayout(props BaseLayoutProps) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ props.Title }</title>
-			if  os.Getenv("APP_ENV") == "DEV" {
+			if os.Getenv("APP_ENV") == "DEV" {
 				<script type="module" src="http://localhost:5173/@vite/client"></script>
 				<script type="module" src="http://localhost:5173/assets/index.ts"></script>
 			} else {
 				<!-- TODO: parse build output -->
-				<script type="module" src="http://localhost:5173/@vite/client"></script>
-				<script type="module" src="http://localhost:5173/assets/index.ts"></script>
+				<!-- Output Example: <script type="module" src="assets/index-Dw5emGmk.js"></script> -->
 			}
 		</head>
 		<body

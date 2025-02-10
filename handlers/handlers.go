@@ -32,7 +32,7 @@ func (h *Handlers) registerRoutes() {
 }
 
 func (h *Handlers) StartServer(address string) {
-	h.echo.Static("/assets", "assets")
+	h.echo.Static("/assets", "public/assets")
 
 	h.registerRoutes()
 
