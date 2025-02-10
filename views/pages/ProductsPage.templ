@@ -2,6 +2,7 @@ package pages
 
 import "github.com/a-h/templ-examples/hello-world/database/repository"
 import "github.com/a-h/templ-examples/hello-world/views/layouts"
+import "fmt"
 
 type ProductsPageProps struct {
 	Products []repository.Product
@@ -27,7 +28,7 @@ templ ProductsPage(props ProductsPageProps) {
 		</section>
 		<ul>
 			for _, product := range props.Products {
-				<li id={ product.ID.String() }>{ product.Name }</li>
+				<li><a href={ templ.URL(fmt.Sprintf("/products/%s", product.Slug)) }>{ product.Name }</a></li>
 			}
 		</ul>
 	}
