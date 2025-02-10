@@ -5,17 +5,27 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/a-h/templ-examples/hello-world/database/repository"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/fx"
 )
 
-func NewPostgresPool(ctx context.Context) *pgxpool.Pool {
+func NewPostgresPool(lc fx.Lifecycle, ctx context.Context) repository.DBTX {
 	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	// TODO: use lifecycle
-	defer pool.Close()
+
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+				os.Exit(1)
+			}
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			pool.Close()
+			return nil
+		},
+	})
 
 	return pool
 }
