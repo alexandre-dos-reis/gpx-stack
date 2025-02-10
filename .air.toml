@@ -4,8 +4,8 @@ tmp_dir = "tmp"
 
 [build]
   args_bin = []
-  bin = "./tmp/main"
-  cmd = "templ generate && go build -o ./tmp/main ."
+  bin = "./tmp/front"
+  cmd = "templ generate && go build -o ./tmp/front ./cmd/front"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "_postgres_app_data", "assets", "node_modules"]
   exclude_file = []
