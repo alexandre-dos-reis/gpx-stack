@@ -48,12 +48,12 @@ in {
   };
 
   scripts = let
-    migrationPath = "db/migrations";
+    migrationPath = "database/migrations";
   in {
-    mig-create.exec = ''
+    mg-create.exec = ''
       migrate create -ext sql -dir ${migrationPath} -seq $1
     '';
-    mig-migrate.exec = ''
+    mg-migrate.exec = ''
       migrate -database ${DB_URL} -path ${migrationPath} up
       sqlc generate
     '';

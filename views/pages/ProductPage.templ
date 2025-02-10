@@ -1,0 +1,15 @@
+
+package pages
+
+import "github.com/a-h/templ-examples/hello-world/database/repository"
+import "github.com/a-h/templ-examples/hello-world/views/layouts"
+
+type ProductPageProps struct {
+	Product repository.Product
+}
+
+templ ProductPage(props ProductPageProps) {
+	@layout.BaseLayout(layout.BaseLayoutProps{Title: "Home page"}) {
+		<h1>{ props.Product.Name }</h1>
+	}
+}

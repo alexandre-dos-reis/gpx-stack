@@ -7,11 +7,13 @@ package repository
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const findAllProducts = `-- name: FindAllProducts :many
 SELECT
-    id, name
+    id, name, slug
 FROM
     products
 `
@@ -25,7 +27,7 @@ func (q *Queries) FindAllProducts(ctx context.Context) ([]Product, error) {
 	var items []Product
 	for rows.Next() {
 		var i Product
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.Slug); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -34,4 +36,20 @@ func (q *Queries) FindAllProducts(ctx context.Context) ([]Product, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const findOneProductBySlug = `-- name: FindOneProductBySlug :one
+SELECT
+    id, name, slug
+FROM
+    products
+WHERE
+    slug = $1
+`
+
+func (q *Queries) FindOneProductBySlug(ctx context.Context, slug pgtype.Text) (Product, error) {
+	row := q.db.QueryRow(ctx, findOneProductBySlug, slug)
+	var i Product
+	err := row.Scan(&i.ID, &i.Name, &i.Slug)
+	return i, err
 }
