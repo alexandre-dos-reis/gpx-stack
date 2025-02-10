@@ -7,6 +7,6 @@ import (
 
 func (h *Handlers) homeHandlers() {
 	h.echo.GET("/", func(c echo.Context) error {
-		return h.render(c, pages.HomePage())
+		return h.RenderOk(c, pages.HomePage())
 	})
 }
