@@ -21,14 +21,21 @@ func New(ctx context.Context, repo *repository.Queries, echo *echo.Echo) *Handle
 	}
 }
 
-func (h *Handlers) registerRoutes() {
+func (h *Handlers) registerFrontRoutes() {
+	h.echo.Static("/assets", "public/assets")
 	h.homeHandlers()
 	h.productsHandlers()
 }
 
+func (h *Handlers) registerAdminRoutes() {
+	// h.echo.Static("/*", "public/assets/admin")
+	h.adminHandlers()
+}
+
 func (h *Handlers) StartServer(address string) {
-	h.echo.Static("/assets", "public/assets")
-	h.registerRoutes()
+	h.registerFrontRoutes()
+	h.registerAdminRoutes()
+
 	h.echo.Logger.Fatal(h.echo.Start(address))
 }
 
