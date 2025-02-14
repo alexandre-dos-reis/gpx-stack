@@ -9,7 +9,7 @@ import (
 )
 
 type Product struct {
-	ID   pgtype.UUID
-	Name string
-	Slug string
+	ID   pgtype.UUID `json:"id"`
+	Name string      `json:"name"`
+	Slug string      `json:"slug"`
 }

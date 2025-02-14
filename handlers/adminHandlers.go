@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/a-h/templ-examples/hello-world/database/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -65,6 +66,15 @@ func (h *Handlers) adminHandlers() {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, "bad request")
 		}
+
+		resourceTableMapping := map[string]struct {
+			table      string
+			structType interface{}
+		}{
+			"products": {table: "products", structType: repository.Product{}},
+		}
+
+		table := resourceTableMapping[request.Resource]
 
 		contentRange := fmt.Sprintf("%s %d-%d/%d", request.Resource, 0, 0, 0)
 		c.Response().Header().Set("Content-Range", contentRange)

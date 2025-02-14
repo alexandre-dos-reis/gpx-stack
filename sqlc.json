@@ -9,7 +9,8 @@
         "go": {
           "package": "repository",
           "out": "./database/repository",
-          "sql_package": "pgx/v5"
+          "sql_package": "pgx/v5",
+          "emit_json_tags": true
         }
       }
     }

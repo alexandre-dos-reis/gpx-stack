@@ -11,13 +11,20 @@ type Handlers struct {
 	echo *echo.Echo
 	repo *repository.Queries
 	ctx  context.Context
+	db   repository.DBTX
 }
 
-func New(ctx context.Context, repo *repository.Queries, echo *echo.Echo) *Handlers {
+func New(
+	ctx context.Context,
+	repo *repository.Queries,
+	echo *echo.Echo,
+	db repository.DBTX,
+) *Handlers {
 	return &Handlers{
 		echo: echo,
 		repo: repo,
 		ctx:  ctx,
+		db:   db,
 	}
 }
 
