@@ -15,6 +15,7 @@ type GetListRequest struct {
 	Range    []int
 	Filter   map[string]string
 }
+type GetListResponse []any
 
 func BindValue[T any](param string, value *T) error {
 	if param != "" {
@@ -42,19 +43,32 @@ func (req *GetListRequest) bind(c echo.Context) (*GetListRequest, error) {
 }
 
 func (h *Handlers) adminHandlers() {
-	h.echo.Use(middleware.CORS())
-	h.echo.Debug = true
-
 	h.echo.Use(middleware.Logger())
+	// useless if admin is served by the same server...
+	h.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodHead,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodPost,
+			http.MethodDelete,
+		},
+	}))
+	h.echo.Debug = true
 
 	g := h.echo.Group("/admin")
 
 	g.GET("/:resource", func(c echo.Context) error {
 		request, err := (&GetListRequest{}).bind(c)
 		if err != nil {
-			fmt.Println(err)
-			return c.String(http.StatusBadRequest, "bad request")
+			return c.JSON(http.StatusBadRequest, "bad request")
 		}
-		return c.JSON(http.StatusOK, &request)
+
+		contentRange := fmt.Sprintf("%s %d-%d/%d", request.Resource, 0, 0, 0)
+		c.Response().Header().Set("Content-Range", contentRange)
+		c.Response().Header().Set("Access-Control-Expose-Headers", "Content-Range")
+		return c.JSON(http.StatusOK, &GetListResponse{})
 	})
 }
