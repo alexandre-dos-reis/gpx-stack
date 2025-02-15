@@ -5,8 +5,7 @@ const dataProvider = simpleRestProvider("http://localhost:3000/admin");
 
 const App = () => (
   <Admin dataProvider={dataProvider}>
-    <Resource name="posts" list={ListGuesser} />
-    <Resource name="comments" list={ListGuesser} />
+    <Resource name="products" list={ListGuesser} />
   </Admin>
 );
 

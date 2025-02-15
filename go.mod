@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/georgysavva/scany/v2 v2.1.3 // indirect
 	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

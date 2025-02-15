@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/a-h/templ-examples/hello-world/database/repository"
+	"github.com/jackc/pgx/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -67,18 +67,47 @@ func (h *Handlers) adminHandlers() {
 			return c.JSON(http.StatusBadRequest, "bad request")
 		}
 
-		resourceTableMapping := map[string]struct {
-			table      string
-			structType interface{}
-		}{
-			"products": {table: "products", structType: repository.Product{}},
+		// check if table exist in struct
+		query := fmt.Sprintf(`
+		SELECT row_to_json(r) FROM (
+			SELECT * FROM %s
+		) r;`, request.Resource)
+
+		rows, err := h.db.Query(h.ctx, query)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "Request malformated !")
 		}
+		defer rows.Close()
 
-		table := resourceTableMapping[request.Resource]
+		res := pgJsonToArrayMap(rows)
+		len := len(res)
 
-		contentRange := fmt.Sprintf("%s %d-%d/%d", request.Resource, 0, 0, 0)
+		contentRange := fmt.Sprintf("%s %d-%d/%d", request.Resource, 0, len, len)
 		c.Response().Header().Set("Content-Range", contentRange)
 		c.Response().Header().Set("Access-Control-Expose-Headers", "Content-Range")
-		return c.JSON(http.StatusOK, &GetListResponse{})
+		return c.JSON(http.StatusOK, res)
 	})
+}
+
+func pgJsonToArrayMap(rows pgx.Rows) []map[string]interface{} {
+	tableData := make([]map[string]interface{}, 0)
+
+	for rows.Next() {
+		var jsonData []byte
+		if err := rows.Scan(&jsonData); err != nil {
+			fmt.Println("Error scanning row:", err)
+			continue
+		}
+
+		// Unmarshal JSON into a map
+		var entry map[string]interface{}
+		if err := json.Unmarshal(jsonData, &entry); err != nil {
+			fmt.Println("Error unmarshaling JSON:", err)
+			continue
+		}
+
+		tableData = append(tableData, entry)
+	}
+
+	return tableData
 }
