@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/a-h/templ-examples/hello-world/database/repository"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,14 +12,14 @@ type Handlers struct {
 	echo *echo.Echo
 	repo *repository.Queries
 	ctx  context.Context
-	db   repository.DBTX
+	db   *pgxpool.Pool
 }
 
 func New(
 	ctx context.Context,
 	repo *repository.Queries,
 	echo *echo.Echo,
-	db repository.DBTX,
+	db *pgxpool.Pool,
 ) *Handlers {
 	return &Handlers{
 		echo: echo,

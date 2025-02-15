@@ -10,8 +10,8 @@ import (
 	"go.uber.org/fx"
 )
 
-func NewPostgresPool(lc fx.Lifecycle, ctx context.Context) repository.DBTX {
-	pool, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
+func NewPostgresPool(lc fx.Lifecycle, ctx context.Context) *pgxpool.Pool {
+	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
@@ -27,5 +27,9 @@ func NewPostgresPool(lc fx.Lifecycle, ctx context.Context) repository.DBTX {
 		},
 	})
 
+	return pool
+}
+
+func NewRepoConnection(pool *pgxpool.Pool) repository.DBTX {
 	return pool
 }

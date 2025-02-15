@@ -15,6 +15,7 @@ func main() {
 		fx.Provide(
 			context.Background,
 			database.NewPostgresPool,
+			database.NewRepoConnection,
 			repository.New,
 			echo.New,
 			handlers.New,
