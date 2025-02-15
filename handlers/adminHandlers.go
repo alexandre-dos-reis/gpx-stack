@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// Ref: https://github.com/marmelab/react-admin/blob/master/packages/ra-data-simple-rest/README.md
 type GetListRequest struct {
 	Resource string
 	Sort     []string
@@ -96,6 +97,8 @@ func (h *Handlers) adminHandlers() {
 		if len(filterConditions) > 0 {
 			filterQuery = "WHERE " + strings.Join(filterConditions, " AND ")
 		}
+
+		// TODO: check if resource exists in repository before making query
 
 		// TODO: use a transaction to wrap data and count
 		query := fmt.Sprintf(`
