@@ -19,11 +19,9 @@ func GetOneHandler(c echo.Context, db *pgxpool.Pool, ctx context.Context) error 
 
 	id := c.Param("id")
 
-	// FIXME: "ERROR: trailing junk after numeric literal at or near \"3f51fa8e\" (SQLSTATE 42601)"
-	// This is an error converting uuid to json...
 	dataQuery := fmt.Sprintf(`
 		SELECT to_json(r) FROM (
-			SELECT %s FROM %s where id = %s
+			SELECT %s FROM %s where id = '%s'
 		) r;`,
 		strings.Join(
 			AllowedTables[resource].ColumnsAllowed,
@@ -33,11 +31,11 @@ func GetOneHandler(c echo.Context, db *pgxpool.Pool, ctx context.Context) error 
 		id,
 	)
 
-	row, err := db.Query(ctx, dataQuery)
+	row := db.QueryRow(ctx, dataQuery)
+	res, err := PgRowToMap(row)
 	if err != nil {
 		return SendError(c, err)
 	}
-	res := PgRowsToArrayMap(row)
 
 	return c.JSON(http.StatusOK, res)
 }
