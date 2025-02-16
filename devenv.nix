@@ -14,7 +14,12 @@
   DB_HOST = "localhost";
   DB_URL = "postgresql://${DB_OWNER}:${DB_PASSWORD}@${DB_HOST}:${toString DB_PORT}/${DB_NAME}?sslmode=disable";
 in {
-  env.DATABASE_URL = DB_URL;
+  env.DB_URL = DB_URL;
+  # env.DB_OWNER = DB_OWNER;
+  # env.DB_PASSWORD = DB_PASSWORD;
+  # env.DB_NAME = DB_NAME;
+  # env.DB_PORT = DB_PORT;
+  # env.DB_HOST = DB_HOST;
 
   packages = with pkgs; [
     air

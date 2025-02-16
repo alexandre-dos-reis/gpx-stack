@@ -6,6 +6,7 @@ import (
 	"github.com/a-h/templ-examples/hello-world/database"
 	"github.com/a-h/templ-examples/hello-world/database/repository"
 	"github.com/a-h/templ-examples/hello-world/handlers"
+	"github.com/a-h/templ-examples/hello-world/logger"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/fx"
 )
@@ -14,6 +15,7 @@ func main() {
 	app := fx.New(
 		fx.Provide(
 			context.Background,
+			logger.New,
 			database.NewPgPool,
 			database.NewRepositoryPool,
 			repository.New,

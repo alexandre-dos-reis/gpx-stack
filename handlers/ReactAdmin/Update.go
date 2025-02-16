@@ -24,20 +24,27 @@ func UpdateHandler(c echo.Context, db *pgxpool.Pool, ctx context.Context) error 
 		return SendError(c, err)
 	}
 
-	dataQuery := fmt.Sprintf(`
+	// FIXME: Resource seemd to be present in the columns, rm it !
+
+	columns := []string{}
+	values := []string{}
+
+	for k, v := range data {
+		columns = append(columns, k)
+		values = append(values, fmt.Sprintf("%v", v))
+	}
+
+	insertedRow := db.QueryRow(ctx, `
 		SELECT to_json(r) FROM (
-			SELECT %s FROM %s where id = '%s'
+			UPDATE %s SET (%s) = (%s) WHERE id = '%s' RETURNING *
 		) r;`,
-		strings.Join(
-			AllowedTables[resource].ColumnsAllowed,
-			", ",
-		),
 		resource,
+		strings.Join(columns, ", "),
+		strings.Join(values, ", "),
 		id,
 	)
 
-	row := db.QueryRow(ctx, dataQuery)
-	res, err := PgRowToMap(row)
+	res, err := PgRowToMap(insertedRow)
 	if err != nil {
 		return SendError(c, err)
 	}
