@@ -14,8 +14,8 @@ func main() {
 	app := fx.New(
 		fx.Provide(
 			context.Background,
-			database.NewPostgresPool,
-			database.NewRepoConnection,
+			database.NewPgPool,
+			database.NewRepositoryPool,
 			repository.New,
 			echo.New,
 			handlers.New,

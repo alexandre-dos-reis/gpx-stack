@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handlers) adminHandlers() {
-	h.echo.Use(middleware.Logger())
+	// h.echo.Use(middleware.Logger())
 	// useless if admin is served by the same server...
 	h.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
@@ -27,9 +27,12 @@ func (h *Handlers) adminHandlers() {
 	g := h.echo.Group("/admin")
 
 	Ra.AllowedTables = map[string]struct{ ColumnsAllowed []string }{
-		"products": {ColumnsAllowed: []string{"id::text", "name", "slug"}},
+		"products": {ColumnsAllowed: []string{"*"}},
 	}
 
+	g.PUT("/:resource/:id", func(c echo.Context) error {
+		return Ra.UpdateHandler(c, h.db, h.ctx)
+	})
 	g.GET("/:resource/:id", func(c echo.Context) error {
 		return Ra.GetOneHandler(c, h.db, h.ctx)
 	})
